@@ -53,9 +53,10 @@ def home():
         rot = int(request.args.get('rot'))
         modified_img = modified_img.rotate(rot)
 
-    if(request.args.get('b') != None):
+    if(request.args.get('b')):
         b = request.args.get('b')
-        modified_img = modified_img.filter(ImageFilter.MaxFilter(3))
+        if(b.lower() == "true"):
+            modified_img = modified_img.filter(ImageFilter.BLUR)
 
     q = 100
     if(request.args.get('q')):
