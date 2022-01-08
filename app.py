@@ -11,9 +11,10 @@ from PIL import ImageFilter
 
 app = Flask(__name__)
 
-cache = set()
-for (dirpath, dirnames, filenames) in walk('store'):
-    cache = set(filenames)
+# # feat cache
+# cache = set()
+# for (dirpath, dirnames, filenames) in walk('store'):
+#     cache = set(filenames)
 
 
 @app.route("/")
@@ -57,10 +58,13 @@ def home():
 
     img_io = BytesIO()
     modified_img.save(img_io, f, quality=q)
-    modified_img.save("store/"+str(hash(request.url)) +
-                      "."+f.lower(), f, quality=q)
-    cache.add(str(hash(request.url)) +
-              "."+f.lower())
+
+    # # feat cache
+    # modified_img.save("store/"+str(hash(request.url)) +
+    #                   "."+f.lower(), f, quality=q)
+    # cache.add(str(hash(request.url)) +
+    #           "."+f.lower())
+
     img_io.seek(0)
     return send_file(img_io, mimetype='image/'+f.lower())
 
