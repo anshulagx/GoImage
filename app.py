@@ -25,14 +25,14 @@ def home():
         f = request.args.get('f')
 
     # feat cache
-    # if(str(hash(request.url))+"."+f.lower() in cache):
+    # if(str(hash(request.url))+"."+f.lower() in cache and request.args.get('img')):
     #     print('*** Return Cache ***')
     #     return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
 
-    if(not request.args.get('img')):
-        return "No img"
+    img = "https://source.unsplash.com/random"
+    if(request.args.get('img')):
+        img = request.args.get('img')
 
-    img = request.args.get('img')
     response = requests.get(img)
     imgg = Image.open(BytesIO(response.content))
 
