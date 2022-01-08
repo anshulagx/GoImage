@@ -98,21 +98,21 @@ def fetch_github(userid, img):
     return send_file(img_io, mimetype='image/'+ext)
 
 
-# @app.route('/gb/<userid>/<repo>/<img>', methods=['GET'])
-# def fetch_github(userid, img, repo):
-#     repo_name = repo
-#     url = "https://raw.githubusercontent.com/" + \
-#         userid+"/"+repo_name+"/main/"+img
-#     ext = url[url.rindex('.')+1:]
+@app.route('/gb/<usrid>/<repo>/<image>', methods=['GET'])
+def fetch_github_with_repo(usrid, image, repo):
+    repo_name = repo
+    url = "https://raw.githubusercontent.com/" + \
+        usrid+"/"+repo_name+"/main/"+image
+    ext = url[url.rindex('.')+1:]
 
-#     print(url)
-#     response = requests.get(url)
-#     print(response)
-#     img = Image.open(BytesIO(response.content))
-#     img_io = BytesIO()
-#     img.save(img_io, ext)
-#     img_io.seek(0)
-#     return send_file(img_io, mimetype='image/'+ext)
+    print(url)
+    response = requests.get(url)
+    print(response)
+    image = Image.open(BytesIO(response.content))
+    image_io = BytesIO()
+    image.save(image_io, ext)
+    image_io.seek(0)
+    return send_file(image_io, mimetype='image/'+ext)
 
 
 @app.route('/save', methods=['GET', 'POST'])
