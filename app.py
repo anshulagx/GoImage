@@ -8,13 +8,17 @@ import requests
 from io import BytesIO
 from PIL import ImageFilter
 
+from os import environ
 
 app = Flask(__name__)
 
-# # feat cache
-# cache = set()
-# for (dirpath, dirnames, filenames) in walk('store'):
-#     cache = set(filenames)
+ver = environ.get("version")
+
+if(ver != 'lite'):
+    # feat cache
+    cache = set()
+    for (dirpath, dirnames, filenames) in walk('store'):
+        cache = set(filenames)
 
 
 @app.route("/")
@@ -24,10 +28,11 @@ def home():
     if(request.args.get('f')):
         f = request.args.get('f')
 
-    # feat cache
-    # if(str(hash(request.url))+"."+f.lower() in cache and request.args.get('img')):
-    #     print('*** Return Cache ***')
-    #     return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
+    if(ver != "lite"):
+        # feat cache
+        if(str(hash(request.url))+"."+f.lower() in cache and request.args.get('img')):
+            print('*** Return Cache ***')
+            return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
 
     img = "https://source.unsplash.com/random"
     if(request.args.get('img')):
@@ -59,11 +64,12 @@ def home():
     img_io = BytesIO()
     modified_img.save(img_io, f, quality=q)
 
-    # # feat cache
-    # modified_img.save("store/"+str(hash(request.url)) +
-    #                   "."+f.lower(), f, quality=q)
-    # cache.add(str(hash(request.url)) +
-    #           "."+f.lower())
+    if(ver != "lite"):
+        # feat cache
+        modified_img.save("store/"+str(hash(request.url)) +
+                          "."+f.lower(), f, quality=q)
+        cache.add(str(hash(request.url)) +
+                  "."+f.lower())
 
     img_io.seek(0)
     return send_file(img_io, mimetype='image/'+f.lower())
