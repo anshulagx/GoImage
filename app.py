@@ -81,9 +81,26 @@ def home():
     return send_file(img_io, mimetype='image/'+f.lower())
 
 
-@app.route('/g/<userid>/<repo>/<img>', methods=['GET'])
+@app.route('/gb/<userid>/<repo>/<img>', methods=['GET'])
 def fetch_github(userid, img, repo):
     repo_name = repo
+    url = "https://raw.githubusercontent.com/" + \
+        userid+"/"+repo_name+"/main/"+img
+    ext = url[url.rindex('.')+1:]
+
+    print(url)
+    response = requests.get(url)
+    print(response)
+    img = Image.open(BytesIO(response.content))
+    img_io = BytesIO()
+    img.save(img_io, ext)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/'+ext)
+
+
+@app.route('/g/<userid>/<img>', methods=['GET'])
+def fetch_github(userid, img, repo):
+    repo_name = "goimg"
     url = "https://raw.githubusercontent.com/" + \
         userid+"/"+repo_name+"/main/"+img
     ext = url[url.rindex('.')+1:]
