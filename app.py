@@ -99,7 +99,7 @@ def fetch_github(userid, img, repo):
 
 
 @app.route('/g/<userid>/<img>', methods=['GET'])
-def fetch_github(userid, img, repo):
+def fetch_github(userid, img):
     repo_name = "goimg"
     url = "https://raw.githubusercontent.com/" + \
         userid+"/"+repo_name+"/main/"+img
