@@ -68,6 +68,8 @@ def home():
         q = int(request.args.get('q'))
 
     img_io = BytesIO()
+    if(f != 'png'):
+        modified_img = modified_img.convert('RGB')
     modified_img.save(img_io, f, quality=q)
 
     if(ver != "lite"):
@@ -81,38 +83,90 @@ def home():
     return send_file(img_io, mimetype='image/'+f.lower())
 
 
-@app.route('/g/<userid>/<img>', methods=['GET'])
-def fetch_github(userid, img):
-    repo_name = "goimg"
-    url = "https://raw.githubusercontent.com/" + \
-        userid+"/"+repo_name+"/main/"+img
-    ext = url[url.rindex('.')+1:]
-
-    print(url)
-    response = requests.get(url)
-    print(response)
-    img = Image.open(BytesIO(response.content))
-    img_io = BytesIO()
-    img.save(img_io, ext)
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/'+ext)
-
-
-@app.route('/gb/<usrid>/<repo>/<image>', methods=['GET'])
+@app.route('/gb/<usrid>/<repo>/<image>/', methods=['GET'])
 def fetch_github_with_repo(usrid, image, repo):
     repo_name = repo
     url = "https://raw.githubusercontent.com/" + \
         usrid+"/"+repo_name+"/main/"+image
     ext = url[url.rindex('.')+1:]
 
-    print(url)
     response = requests.get(url)
-    print(response)
     image = Image.open(BytesIO(response.content))
-    image_io = BytesIO()
-    image.save(image_io, ext)
-    image_io.seek(0)
-    return send_file(image_io, mimetype='image/'+ext)
+
+    modified_img = image
+
+    # size formating
+    if(request.args.get('w') and request.args.get('h')):
+        w = int(request.args.get('w'))
+        h = int(request.args.get('h'))
+        modified_img = modified_img.resize((w, h))
+
+    if(request.args.get('rot')):
+        rot = int(request.args.get('rot'))
+        modified_img = modified_img.rotate(rot)
+
+    if(request.args.get('b')):
+        b = request.args.get('b')
+        if(b.lower() == "true"):
+            modified_img = modified_img.filter(ImageFilter.BLUR)
+
+    q = 100
+    if(request.args.get('q')):
+        q = int(request.args.get('q'))
+
+    f = "JPEG"
+    if(request.args.get('f')):
+        f = request.args.get('f')
+
+    img_io = BytesIO()
+    if(f != 'png'):
+        modified_img = modified_img.convert('RGB')
+    modified_img.save(img_io, f, quality=q)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/'+ext)
+
+
+@app.route('/g/<userid>/<img>/', methods=['GET'])
+def fetch_github(userid, img):
+    repo_name = "goimg"
+    url = "https://raw.githubusercontent.com/" + \
+        userid+"/"+repo_name+"/main/"+img
+    ext = url[url.rindex('.')+1:]
+
+    response = requests.get(url)
+    img = Image.open(BytesIO(response.content))
+
+    modified_img = img
+
+    # size formating
+    if(request.args.get('w') and request.args.get('h')):
+        w = int(request.args.get('w'))
+        h = int(request.args.get('h'))
+        modified_img = modified_img.resize((w, h))
+
+    if(request.args.get('rot')):
+        rot = int(request.args.get('rot'))
+        modified_img = modified_img.rotate(rot)
+
+    if(request.args.get('b')):
+        b = request.args.get('b')
+        if(b.lower() == "true"):
+            modified_img = modified_img.filter(ImageFilter.BLUR)
+
+    q = 100
+    if(request.args.get('q')):
+        q = int(request.args.get('q'))
+
+    f = "JPEG"
+    if(request.args.get('f')):
+        f = request.args.get('f')
+
+    img_io = BytesIO()
+    if(f != 'png'):
+        modified_img = modified_img.convert('RGB')
+    modified_img.save(img_io, f, quality=q)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/'+ext)
 
 
 @app.route('/save', methods=['GET', 'POST'])
