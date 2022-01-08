@@ -83,7 +83,7 @@ def home():
     return send_file(img_io, mimetype='image/'+f.lower())
 
 
-@app.route('/gb/<usrid>/<repo>/<image>/', methods=['GET'])
+@app.route('/gr/<usrid>/<repo>/<image>/', methods=['GET'])
 @cross_origin()
 def fetch_github_with_repo(usrid, image, repo):
     repo_name = repo
