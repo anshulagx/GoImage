@@ -1,3 +1,4 @@
+from os import walk
 from flask import Flask
 from flask import request
 from flask import send_file
@@ -10,21 +11,22 @@ from PIL import ImageFilter
 
 app = Flask(__name__)
 
-
-# def modify(im, w=None, h=None, rot=None, b=False):
-#     m_img = im
-
-#     m_img = im.resize((w, h))
-#     if(b):
-#         m_img = filter(ImageFilter.MaxFilter(3))
-#     # m_img = im.rotate(im, rot)
-#     # m_img = im.thumbnail(im, rot)
-
-#     return m_img
+cache = set()
+for (dirpath, dirnames, filenames) in walk('store'):
+    cache = set(filenames)
 
 
 @app.route("/")
 def home():
+
+    f = "JPEG"
+    if(request.args.get('f')):
+        f = request.args.get('f')
+
+    if(str(hash(request.url))+"."+f.lower() in cache):
+        print('*** Return Cache ***')
+        return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
+
     if(not request.args.get('img')):
         return "No img"
 
@@ -44,28 +46,20 @@ def home():
         rot = int(request.args.get('rot'))
         modified_img = modified_img.rotate(rot)
 
-    # if(request.args.get('b') != None):
-    #     b = request.args.get('b')
-    #     modified_img = modified_img.filter(ImageFilter.MaxFilter(3))
+    if(request.args.get('b') != None):
+        b = request.args.get('b')
+        modified_img = modified_img.filter(ImageFilter.MaxFilter(3))
 
     q = 100
     if(request.args.get('q')):
         q = int(request.args.get('q'))
 
-    f = "JPEG"
-    if(request.args.get('f')):
-        f = request.args.get('f')
-
     img_io = BytesIO()
     modified_img.save(img_io, f, quality=q)
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/'+f.lower())
-
-
-def serve_pil_image(pil_img, q=100, f="JPEG"):
-    print("g", f)
-    img_io = BytesIO()
-    pil_img.save(img_io, f, quality=q)
+    modified_img.save("store/"+str(hash(request.url)) +
+                      "."+f.lower(), f, quality=q)
+    cache.add(str(hash(request.url)) +
+              "."+f.lower())
     img_io.seek(0)
     return send_file(img_io, mimetype='image/'+f.lower())
 
