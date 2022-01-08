@@ -23,9 +23,10 @@ def home():
     if(request.args.get('f')):
         f = request.args.get('f')
 
-    if(str(hash(request.url))+"."+f.lower() in cache):
-        print('*** Return Cache ***')
-        return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
+    # feat cache
+    # if(str(hash(request.url))+"."+f.lower() in cache):
+    #     print('*** Return Cache ***')
+    #     return send_file('store/'+str(hash(request.url))+"."+f.lower(), mimetype='image/'+f.lower())
 
     if(not request.args.get('img')):
         return "No img"
