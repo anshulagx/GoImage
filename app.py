@@ -84,6 +84,7 @@ def home():
 
 
 @app.route('/gb/<usrid>/<repo>/<image>/', methods=['GET'])
+@cross_origin()
 def fetch_github_with_repo(usrid, image, repo):
     repo_name = repo
     url = "https://raw.githubusercontent.com/" + \
@@ -127,6 +128,7 @@ def fetch_github_with_repo(usrid, image, repo):
 
 
 @app.route('/g/<userid>/<img>/', methods=['GET'])
+@cross_origin()
 def fetch_github(userid, img):
     repo_name = "goimg"
     url = "https://raw.githubusercontent.com/" + \
