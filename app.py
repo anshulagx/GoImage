@@ -9,6 +9,7 @@ from io import BytesIO
 from PIL import ImageFilter
 
 from os import environ
+import os
 
 from flask_cors import CORS, cross_origin
 
@@ -28,7 +29,6 @@ if(ver != 'lite'):
 @app.route("/")
 @cross_origin()
 def home():
-
     f = "JPEG"
     if(request.args.get('f')):
         f = request.args.get('f')
@@ -81,6 +81,48 @@ def home():
     return send_file(img_io, mimetype='image/'+f.lower())
 
 
+@app.route('/g/<userid>/<repo>/<img>', methods=['GET'])
+def fetch_github(userid, img, repo):
+    repo_name = repo
+    url = "https://raw.githubusercontent.com/" + \
+        userid+"/"+repo_name+"/main/"+img
+    ext = url[url.rindex('.')+1:]
+
+    print(url)
+    response = requests.get(url)
+    print(response)
+    img = Image.open(BytesIO(response.content))
+    img_io = BytesIO()
+    img.save(img_io, ext)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/'+ext)
+
+
+@app.route('/save', methods=['GET', 'POST'])
+def upload_file():
+    if(ver != "lite"):
+        if request.method == 'POST':
+            if 'file1' not in request.files:
+                return 'there is no file1 in form!'
+            file1 = request.files['file1']
+            ext = file1.filename[file1.filename.rindex('.'):]
+            path = os.path.join('save', request.form['name']+ext)
+            file1.save(path)
+            return path
+
+            return 'ok'
+        return '''
+        <h1>Upload new File</h1>
+        <form method="post" enctype="multipart/form-data">
+        <input type="text" name="name">
+        <input type="file" name="file1">
+        <input type="submit">
+        </form>
+        '''
+    else:
+        return "This feature is only available in self hosted version :("
+
+
 if __name__ == "__main__":
-    # app.run(debug=True)
-    app.run(threaded=True)
+    app.run(debug=True)
+    # app.run(threaded=True)
