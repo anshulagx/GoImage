@@ -10,9 +10,13 @@ from PIL import ImageFilter
 
 from os import environ
 
-app = Flask(__name__)
+from flask_cors import CORS, cross_origin
 
+app = Flask(__name__)
+print('Server GoImage!')
 ver = environ.get("version")
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 if(ver != 'lite'):
     # feat cache
@@ -22,6 +26,7 @@ if(ver != 'lite'):
 
 
 @app.route("/")
+@cross_origin()
 def home():
 
     f = "JPEG"
@@ -78,4 +83,4 @@ def home():
 
 if __name__ == "__main__":
     # app.run(debug=True)
-    app.run(threaded=True, port=5000)
+    app.run(threaded=True)
