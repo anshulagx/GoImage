@@ -3,9 +3,9 @@ Host Images for free via your Github and get pretty easy to remember links to us
 
 [Interactive Link Generator](https://go-image-8la.pages.dev/)
 
-[Demo Page Repo](https://go-image-8la.pages.dev/)
+[Demo Page Repo](https://github.com/Akshaya-vc/GoImage-web)
 
-[GoImage Server Repo](https://go-image-8la.pages.dev/)
+[GoImage Server Repo](https://github.com/anshulagx/GoImage)
 
 
 ## Self Host
